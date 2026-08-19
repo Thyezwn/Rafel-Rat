@@ -7,15 +7,12 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()  // <--- هذا السطر هو الحل، سيحمل إضافة Kotlin
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.2.1'
         classpath "org.jetbrains.kotlin.android:kotlin-gradle-plugin:$kotlin_version"
     }
-}
-
-plugins {
-    // لا نحتاج لوضع البلاجين هنا لأننا وضعناها في buildscript
 }
 
 task clean(type: Delete) {
