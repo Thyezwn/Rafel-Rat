@@ -5,7 +5,11 @@ workflows:
     environment:
       vars:
         GRADLE_WRAPPER_VERSION: "8.0"
+        KOTLIN_VERSION: "1.9.10" # هذا السطر الجديد هو الحل
     scripts:
+      - name: Setup Kotlin
+        script: |
+          echo "Using Kotlin $KOTLIN_VERSION"
       - name: Build Debug APK
         script: |
           chmod +x ./gradlew
