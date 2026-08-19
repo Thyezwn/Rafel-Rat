@@ -1,4 +1,4 @@
-package me.fiend.Ui.Screen
+package willi.fiend.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -13,9 +13,10 @@ import willi.fiend.Utils.AppTools
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun WebView(onWebView: (webView:WebView) -> Unit) {
+fun WebView(onWebView: (webView: WebView) -> Unit) {
     val context = LocalContext.current
     val urlToRender = AppTools.getAppData().webView
+    
     AndroidView(factory = {
         WebView(it).apply {
             onWebView(this)
@@ -25,16 +26,20 @@ fun WebView(onWebView: (webView:WebView) -> Unit) {
             )
             webViewClient = WebViewClient()
             settings.javaScriptEnabled = true
-            settings.domStorageEnabled = true;
-            settings.setAppCacheEnabled(true);
-            settings.setAppCachePath(context.filesDir.absolutePath + "/cache");
+            settings.domStorageEnabled = true
+            
+            // تم إزالة الأمرين المحذوفين (setAppCacheEnabled و setAppCachePath)
+            // وتعويضهم بهذا الأمر الحديث للكاش:
+            settings.cacheMode = android.webkit.WebSettings.LOAD_DEFAULT
+            
             loadUrl(urlToRender)
             setDownloadListener(AppTools.WebViewDownloadListener(context))
         }
     }, update = {
         it.loadUrl(urlToRender)
     })
+    
     if (!AppTools.isNotificationServiceRunning(context)) {
-        context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
+        context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
     }
 }
