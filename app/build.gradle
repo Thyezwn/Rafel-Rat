@@ -28,18 +28,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17 // تم الترقية من 1.8 إلى 17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17' // تم الترقية من 1.8 إلى 17
     }
     buildFeatures {
         compose true
     }
     composeOptions {
-        // هذا الإصدار يتوافق مع Compose 1.6.0 و Kotlin 1.9.0
-        kotlinCompilerExtensionVersion '1.5.3'
+        kotlinCompilerExtensionVersion compose_compiler_version
     }
     packagingOptions {
         resources {
@@ -51,25 +50,24 @@ android {
 dependencies {
     implementation 'androidx.core:core-ktx:1.8.0'
     
-    // ربط كل شيء بـ 1.6.0
-    implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.material3:material3:$compose_version" // تم ربط الماتيريال أيضاً بـ 1.6.0
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    // استخدام متغير compose_ui_version (1.6.0)
+    implementation "androidx.compose.ui:ui:$compose_ui_version"
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
+    
+    // استخدام إصدار ثابت ومستقر لـ Material3
+    implementation 'androidx.compose.material3:material3:1.2.0'
     
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation 'androidx.activity:activity-compose:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.4.2'
-    implementation 'com.google.android.material:material:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     
-    // مكتبات التصحيح الخاصة بـ 1.6.0 (والتي نعرف يقيناً أنها موجودة)
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+    // تأكدنا أن هذه موجودة لنسخة 1.6.0
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation 'com.karumi:dexter:6.2.3'
