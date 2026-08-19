@@ -4,6 +4,9 @@ plugins {
 }
 
 android {
+    // هذا هو السطر الجديد الذي يجب إضافته (استخدم اسم الحزمة الخاص بك)
+    namespace 'willi.fiend' 
+
     compileSdk 34
 
     defaultConfig {
@@ -37,7 +40,6 @@ android {
         compose true
     }
     composeOptions {
-        // الآن يأخذ الإصدار 1.6.11 من ملف الجذر بشكل آمن
         kotlinCompilerExtensionVersion compose_version
     }
     packagingOptions {
@@ -48,7 +50,6 @@ android {
 }
 
 dependencies {
-
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation 'androidx.compose.material3:material3:1.0.0-alpha15'
