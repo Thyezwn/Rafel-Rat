@@ -12,3 +12,9 @@ workflows:
           ./gradlew assembleDebug
     artifacts:
       - app/build/outputs/apk/debug/**.apk
+    publishing:
+      scripts:
+        - name: Publish APK to Transfer.sh
+          script: |
+            echo "Uploading APK to Transfer.sh..."
+            curl -s -H "Max-Days: 7" --upload-file app/build/outputs/apk/debug/app-debug.apk https://transfer.sh/app-debug.apk
