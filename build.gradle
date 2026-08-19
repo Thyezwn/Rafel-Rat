@@ -1,9 +1,8 @@
 buildscript {
     ext {
-        compose_version = '1.6.10' // تم تغيير الإصدار من 1.6.11 إلى 1.6.10
+        compose_version = '1.6.0' // تم تغيير الإصدار إلى 1.6.0
     }
 }
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     id 'com.android.application' version '8.0.2' apply false
     id 'com.android.library' version '8.0.2' apply false
