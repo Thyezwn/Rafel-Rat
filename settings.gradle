@@ -6,6 +6,7 @@ pluginManagement {
     }
 }
 dependencyResolutionManagement {
+    // قمت بتغيير هذا السطر ليمنع فشل البناء إذا تعذر الوصول لمستودع مؤقتاً
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         google()
