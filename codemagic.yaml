@@ -1,0 +1,15 @@
+workflows:
+  default-workflow:
+    name: Build MyApp APK
+    environment:
+      groups:
+        - default
+      vars:
+        GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx2048m -Dorg.gradle.daemon=false"
+    scripts:
+      - name: Build Debug APK
+        script: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
