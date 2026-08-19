@@ -1,5 +1,4 @@
 workflows:
-  # هذا هو العمل الذي سيتم تشغيله سواء اخترت android-workflow أو default-workflow
   android-workflow:
     name: Android Build
     max_build_duration: 60
@@ -9,11 +8,11 @@ workflows:
     scripts:
       - name: Build Debug APK
         script: |
+          chmod +x ./gradlew
           ./gradlew assembleDebug
     artifacts:
       - app/build/outputs/apk/debug/**.apk
 
-  # هذا هو العمل الاحتياطي في حال اختار السيرفر اسم default-workflow
   default-workflow:
     name: Default Build
     max_build_duration: 60
@@ -23,6 +22,7 @@ workflows:
     scripts:
       - name: Build Debug APK
         script: |
+          chmod +x ./gradlew
           ./gradlew assembleDebug
     artifacts:
       - app/build/outputs/apk/debug/**.apk
