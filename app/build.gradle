@@ -49,25 +49,26 @@ android {
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.8.0'
-    implementation "androidx.compose.ui:ui:1.6.11"
-    implementation 'androidx.compose.material3:material3:1.2.0'
     
-    // تم إزالة المكتبات التي تسبب التعارض وتم وضعها في مكانها الصحيح
-    implementation "androidx.compose.ui:ui-tooling-preview:1.6.11"
+    // تم ربط جميع مكتبات Compose بنفس المتغير (1.6.10)
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation 'androidx.compose.material3:material3:1.2.0'
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation 'androidx.activity:activity-compose:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.6.11"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     
-    // هذه الخطوة مهمة: نضيفها فقط للـ Debug
-    debugImplementation "androidx.compose.ui:ui-tooling:1.6.11"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.6.11"
+    // مكتبات التصحيح (Debug)
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
 
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation 'com.karumi:dexter:6.2.3'
