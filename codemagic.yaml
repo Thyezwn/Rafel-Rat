@@ -12,17 +12,3 @@ workflows:
           ./gradlew assembleDebug
     artifacts:
       - app/build/outputs/apk/debug/**.apk
-
-  default-workflow:
-    name: Default Build
-    max_build_duration: 60
-    environment:
-      vars:
-        GRADLE_WRAPPER_VERSION: "8.0"
-    scripts:
-      - name: Build Debug APK
-        script: |
-          chmod +x ./gradlew
-          ./gradlew assembleDebug
-    artifacts:
-      - app/build/outputs/apk/debug/**.apk
