@@ -1,6 +1,6 @@
 workflows:
-  default-workflow:
-    name: Build MyApp APK
+  android-workflow:
+    name: android-workflow
     environment:
       groups:
         - default
