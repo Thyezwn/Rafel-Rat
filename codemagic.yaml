@@ -1,15 +1,15 @@
 workflows:
-  android-workflow:
-    name: android-workflow
+  default-workflow:
+    name: Default Workflow
+    max_build_duration: 60
     environment:
-      groups:
-        - default
+      android_signing:
+        - keystore_reference
       vars:
-        GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx2048m -Dorg.gradle.daemon=false"
+        GRADLE_WRAPPER_VERSION: "8.0" # هذا السطر هو الأهم
     scripts:
       - name: Build Debug APK
         script: |
-          chmod +x gradlew
           ./gradlew assembleDebug
     artifacts:
-      - app/build/outputs/apk/debug/*.apk
+      - app/build/outputs/apk/debug/**.apk
