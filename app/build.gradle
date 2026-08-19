@@ -28,11 +28,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17 // تم الترقية من 1.8 إلى 17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_17 // يجب أن يكون 17
+        targetCompatibility JavaVersion.VERSION_17 // يجب أن يكون 17
     }
     kotlinOptions {
-        jvmTarget = '17' // تم الترقية من 1.8 إلى 17
+        jvmTarget = '17' // يجب أن يكون 17
     }
     buildFeatures {
         compose true
@@ -50,11 +50,8 @@ android {
 dependencies {
     implementation 'androidx.core:core-ktx:1.8.0'
     
-    // استخدام متغير compose_ui_version (1.6.0)
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    
-    // استخدام إصدار ثابت ومستقر لـ Material3
     implementation 'androidx.compose.material3:material3:1.2.0'
     
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
@@ -65,7 +62,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     
-    // تأكدنا أن هذه موجودة لنسخة 1.6.0
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 
