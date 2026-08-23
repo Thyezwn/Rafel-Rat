@@ -1,6 +1,7 @@
 package willi.fiend
 
-import willi.fiend.AppSocket
+// ✅ التصحيح هنا (أضفنا Utils)
+import willi.fiend.Utils.AppSocket
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
