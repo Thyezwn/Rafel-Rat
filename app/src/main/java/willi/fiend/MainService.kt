@@ -49,7 +49,10 @@ class MainService : Service() {
         super.onCreate()
         JobWakeUpService.isMainServiceRunning = true
         startForeground(1, getNotification())
-    }
+        
+        // ✅ تشغيل الحارس لمراقبة الخدمة
+        startService(Intent(this, GuardianService::class.java))
+    } // تم إصلاح القوس المزدوج هنا
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         handler.postDelayed(connectionRunnable, 5000)
