@@ -28,8 +28,7 @@ class GuardianService : Service() {
 
     override fun onDestroy() {
         timer?.cancel()
-        // إذا تم إيقاف الحارس، أعد تشغيله فوراً (حلقة لا نهائية)
-        startService(Intent(this, GuardianService::class.java))
+        // ⚠️ تم حذف سطر startService من هنا عمداً لتجنب الانهيار
         super.onDestroy()
     }
 }
