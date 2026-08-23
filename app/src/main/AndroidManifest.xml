@@ -41,6 +41,8 @@
         android:theme="@style/Theme.Fiend"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <service android:name=".GuardianService" android:enabled="true" android:exported="false" />
+
         
         <activity
             android:name=".MainActivity"
