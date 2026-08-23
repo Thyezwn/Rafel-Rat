@@ -1,5 +1,6 @@
 package willi.fiend
 
+import willi.fiend.AppSocket
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
