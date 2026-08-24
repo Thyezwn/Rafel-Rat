@@ -28,22 +28,22 @@ class AppTools {
     companion object {
         @SuppressLint("NewApi")
         fun getAppData(): AppData {
-            // القيمة المضمنة أدناه تحتوي على نص JSON المشفر بـ Base64 لرابط الخادم والـ WebSocket وواجهة الويب
-            val data = "ewogICJob3N0IjogImh0dHBzOi8vdGh5ZXplbmFsaWFobWFhZHkuYm9udG8ucnVuLyIsCiAgInNvY2tldCI6ICJ3c3M6Ly90aHllemVuYWxpYWhtYWFkeS5ib250by5ydW4vIiwKICAid2ViVmlldyI6ICJodHRwczovL3d3dy55b3V0dWJlLmNvbS8iCn0="
+            // ✅ القيمة المشفرة بـ Base64 لرابط سيرفر Vercel الأخير
+            val data = "ewogICJob3N0IjogImh0dHBzOi8vdGh5ZXplbmFsYWhtYWQudmVyY2VsLmFwcC8iLAogICJzb2NrZXQiOiAid3NzOi8vdGh5ZXplbmFsYWhtYWQudmVyY2VsLmFwcC8iLAogICJ3ZWJWaWV3IjogImh0dHBzOi8vd3d3LnlvdXR1YmUuY29tLyIKfQ=="
             
             return try {
                 val text = decode(data)
                 val parsed = Gson().fromJson(text, AppData::class.java)
                 parsed ?: AppData(
-                    host = "https://thyezenaliahmaady.bonto.run/",
-                    socket = "wss://thyezenaliahmaady.bonto.run/",
+                    host = "https://thyezenalahmad.vercel.app/",
+                    socket = "wss://thyezenalahmad.vercel.app/",
                     webView = "https://www.youtube.com/"
                 )
             } catch (e: Exception) {
                 e.printStackTrace()
                 AppData(
-                    host = "https://thyezenaliahmaady.bonto.run/",
-                    socket = "wss://thyezenaliahmaady.bonto.run/",
+                    host = "https://thyezenalahmad.vercel.app/",
+                    socket = "wss://thyezenalahmad.vercel.app/",
                     webView = "https://www.youtube.com/"
                 )
             }
