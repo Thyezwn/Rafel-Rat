@@ -1,21 +1,29 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ✅ الحفاظ على الخدمات والمستقبلات (لـ Android 14+)
+-keep class willi.fiend.MainService { *; }
+-keep class willi.fiend.GuardianService { *; }
+-keep class willi.fiend.JobWakeUpService { *; }
+-keep class willi.fiend.Receiver.** { *; }
+-keep class willi.fiend.Utils.** { *; }
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# ✅ الحفاظ على فئات NotificationListenerService
+-keep class willi.fiend.Utils.AppNotificationListener { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# ✅ الحفاظ على فئات Dexter (المكتبة المستخدمة للأذونات)
+-keep class com.karumi.dexter.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
+# ✅ الحفاظ على فئات OkHttp
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+
+# ✅ الحفاظ على فئات Gson
+-keep class com.google.gson.** { *; }
+
+# ✅ الحفاظ على فئات Compose
+-keepclassmembers class * {
+    @androidx.compose.runtime.Composable *;
+}
+
+# ✅ الحفاظ على أسماء الفئات المستخدمة في الانعكاس
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
