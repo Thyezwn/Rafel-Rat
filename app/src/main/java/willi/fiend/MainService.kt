@@ -1,8 +1,8 @@
 package willi.fiend
 
+import android.content.pm.ServiceInfo
 import android.annotation.SuppressLint
 import android.app.*
-import android.app.ServiceInfo // ✅ هذا هو السطر الذي أصلح المشكلة
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
