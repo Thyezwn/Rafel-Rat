@@ -1,13 +1,13 @@
 buildscript {
     ext {
-        compose_ui_version = '1.6.8'  // ✅ تحديث
-        compose_compiler_version = '1.5.15'  // ✅ تحديث
+        compose_ui_version = '1.6.8'
+        compose_compiler_version = '1.5.15'
     }
 }
 plugins {
-    id 'com.android.application' version '8.2.0' apply false  // ✅ تحديث
-    id 'com.android.library' version '8.2.0' apply false  // ✅ تحديث
-    id 'org.jetbrains.kotlin.android' version '1.9.22' apply false  // ✅ تحديث
+    id 'com.android.application' version '8.2.0' apply false
+    id 'com.android.library' version '8.2.0' apply false
+    id 'org.jetbrains.kotlin.android' version '1.9.25' apply false  // ✅ من 1.9.22 إلى 1.9.25
 }
 
 task clean(type: Delete) {
