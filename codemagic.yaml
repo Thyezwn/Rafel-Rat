@@ -11,9 +11,17 @@ workflows:
     scripts:
       - name: Build Android APK
         script: |
-          # استخدام gradle المثبت مسبقاً بدلاً من gradlew
-          gradle clean
-          gradle assembleDebug
+          # ✅ إعطاء صلاحية التنفيذ لـ gradlew
+          chmod +x gradlew
+          
+          # ✅ عرض الإصدارات للتشخيص
+          echo "Java version:"
+          java -version
+          echo "Gradle version:"
+          ./gradlew --version
+          
+          # ✅ بناء التطبيق مع تفاصيل كاملة
+          ./gradlew clean assembleDebug --stacktrace --no-daemon
     artifacts:
       - app/build/outputs/apk/**/*.apk
     publishing:
