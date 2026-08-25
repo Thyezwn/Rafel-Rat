@@ -2,7 +2,7 @@ package willi.fiend
 
 import android.annotation.SuppressLint
 import android.app.*
-import android.app.ServiceInfo  // ✅ الاستيراد المفقود
+import android.app.ServiceInfo  // ✅ هذا السطر مطلوب
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
