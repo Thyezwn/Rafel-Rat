@@ -1,8 +1,8 @@
 package willi.fiend
 
-import android.app.ServiceInfo
 import android.annotation.SuppressLint
 import android.app.*
+import android.app.ServiceInfo
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
